@@ -1,11 +1,13 @@
-from fastapi import FastAPI, Request, Depends
+from fastapi import FastAPI, Request, Depends, HTTPException, status
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 from sqlalchemy.orm import Session
+from pydantic import BaseModel
 from jose import jwt
 from datetime import datetime, timedelta
 
 from core import downloader
+from core.security import get_password_hash, verify_password
 from platforms.youtube import YouTube
 from platforms.tiktok import TikTok
 from database.db import get_db, User, UserToken
@@ -14,7 +16,16 @@ from database.db import get_db, User, UserToken
 JWT_SECRET = "a_very_secret_key"
 ALGORITHM = "HS256"
 ACCESS_TOKEN_EXPIRE_MINUTES = 30
+ACCESS_CODE = "1024"
 
+class UserCreate(BaseModel):
+    email: str
+    password: str
+    access_code: str
+
+class UserLogin(BaseModel):
+    email: str
+    password: str
 
 app = FastAPI(title="Omni-Clipper API")
 
@@ -26,6 +37,40 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+@app.post("/signup")
+def signup(user: UserCreate, db: Session = Depends(get_db)):
+    if user.access_code != ACCESS_CODE:
+        raise HTTPException(
+            status_code=status.HTTP_403_FORBIDDEN,
+            detail="Invalid access code",
+        )
+    db_user = db.query(User).filter(User.email == user.email).first()
+    if db_user:
+        raise HTTPException(
+            status_code=status.HTTP_400_BAD_REQUEST,
+            detail="Email already registered",
+        )
+    hashed_password = get_password_hash(user.password)
+    new_user = User(email=user.email, hashed_password=hashed_password)
+    db.add(new_user)
+    db.commit()
+    db.refresh(new_user)
+    return {"message": "User created successfully"}
+
+@app.post("/login")
+def login(user: UserLogin, db: Session = Depends(get_db)):
+    db_user = db.query(User).filter(User.email == user.email).first()
+    if not db_user or not verify_password(user.password, db_user.hashed_password):
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Incorrect email or password",
+            headers={"WWW-Authenticate": "Bearer"},
+        )
+    access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
+    to_encode = {"sub": str(db_user.id), "exp": datetime.utcnow() + access_token_expires}
+    encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm=ALGORITHM)
+    return {"access_token": encoded_jwt, "token_type": "bearer"}
 
 @app.get("/")
 def health_check():

@@ -9,3 +9,5 @@ python-multipart
 sqlalchemy
 google-auth-oauthlib
 python-jose
+passlib
+bcrypt
