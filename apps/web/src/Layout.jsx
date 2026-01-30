@@ -23,8 +23,7 @@ export default function Layout({ children }) {
         {children}
       </Box>
       <Box as="footer" py={4} textAlign="center" bg="brand.900" color="white">
-        <Text>&copy; {new Date().getFullYear()} Omni Clipper. All rights reserved.</Text>
-      </Box>
+              </Box>
     </Box>
   );
 }
