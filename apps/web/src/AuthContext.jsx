@@ -7,7 +7,7 @@ export const AuthProvider = ({ children }) => {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem('token'));
 
   const login = async (email, password) => {
-    const response = await axios.post('http://localhost:8000/login', { email, password });
+    const response = await axios.post(`${import.meta.env.VITE_API_URL}/login`, { email, password });
     localStorage.setItem('token', response.data.access_token);
     setIsAuthenticated(true);
   };

@@ -43,7 +43,7 @@ export default function Login() {
   const handleGoogleLogin = () => {
     const code = prompt('Please enter the access code:');
     if (code === '1024') {
-      window.location.href = 'http://localhost:8000/auth/youtube';
+      window.location.href = `${import.meta.env.VITE_API_URL}/auth/youtube`;
     } else {
       toast({
         title: 'Error',
