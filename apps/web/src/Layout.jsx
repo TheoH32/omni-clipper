@@ -1,5 +1,18 @@
 import React from 'react';
-import { Box, Flex, Heading, Text } from '@chakra-ui/react';
+import {
+  Box,
+  Flex,
+  Heading,
+  Text,
+  Menu,
+  MenuButton,
+  MenuList,
+  MenuItem,
+  IconButton,
+  Avatar,
+  MenuDivider,
+} from '@chakra-ui/react';
+import { HamburgerIcon } from '@chakra-ui/icons';
 
 export default function Layout({ children }) {
   return (
@@ -18,6 +31,29 @@ export default function Layout({ children }) {
             Omni Clipper
           </Heading>
         </Flex>
+
+        <Menu>
+          <MenuButton
+            as={Avatar}
+            size="sm"
+            cursor="pointer"
+            name="John Doe" // Placeholder name for avatar fallback
+            src="https://bit.ly/dan-abramov" // Placeholder image
+          />
+          <MenuList color="black">
+            <Box p="2">
+              <Text fontWeight="bold">John Doe</Text>
+              <Text fontSize="sm">john.doe@example.com</Text>
+            </Box>
+            <MenuDivider />
+            <MenuItem>
+              Settings
+            </MenuItem>
+            <MenuItem>
+              User Profile
+            </MenuItem>
+          </MenuList>
+        </Menu>
       </Flex>
       <Box as="main" p={8}>
         {children}
