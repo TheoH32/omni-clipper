@@ -4,7 +4,6 @@ import { Box, Button, Heading, Text } from '@chakra-ui/react';
 import Layout from './Layout';
 
 export default function Dashboard() {
-  const { logout } = useAuth();
 
   return (
     <Layout>
@@ -13,9 +12,6 @@ export default function Dashboard() {
           Dashboard
         </Heading>
         <Text mb={4}>Welcome to your dashboard!</Text>
-        <Button colorScheme="blue" onClick={logout}>
-          Logout
-        </Button>
       </Box>
     </Layout>
   );
