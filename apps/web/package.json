@@ -16,7 +16,8 @@
     "@chakra-ui/react": "^2.8.2",
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
-    "framer-motion": "^10.16.4"
+    "framer-motion": "^10.16.4",
+    "@chakra-ui/icons": "^2.1.1"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^4.0.0",
