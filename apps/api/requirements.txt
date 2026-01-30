@@ -7,3 +7,5 @@ moviepy
 jinja2
 python-multipart
 sqlalchemy
+google-auth-oauthlib
+python-jose
