@@ -19,6 +19,7 @@ ACCESS_TOKEN_EXPIRE_MINUTES = 30
 ACCESS_CODE = "1024"
 
 class UserCreate(BaseModel):
+    name: str
     email: str
     password: str
     access_code: str
@@ -40,6 +41,7 @@ app.add_middleware(
 
 @app.post("/signup")
 def signup(user: UserCreate, db: Session = Depends(get_db)):
+    print(f"Signup request received: {user.dict()}")
     if user.access_code != ACCESS_CODE:
         raise HTTPException(
             status_code=status.HTTP_403_FORBIDDEN,
@@ -52,7 +54,7 @@ def signup(user: UserCreate, db: Session = Depends(get_db)):
             detail="Email already registered",
         )
     hashed_password = get_password_hash(user.password)
-    new_user = User(email=user.email, hashed_password=hashed_password)
+    new_user = User(email=user.email, name=user.name, hashed_password=hashed_password)
     db.add(new_user)
     db.commit()
     db.refresh(new_user)
@@ -70,7 +72,7 @@ def login(user: UserLogin, db: Session = Depends(get_db)):
     access_token_expires = timedelta(minutes=ACCESS_TOKEN_EXPIRE_MINUTES)
     to_encode = {"sub": str(db_user.id), "exp": datetime.utcnow() + access_token_expires}
     encoded_jwt = jwt.encode(to_encode, JWT_SECRET, algorithm=ALGORITHM)
-    return {"access_token": encoded_jwt, "token_type": "bearer"}
+    return {"access_token": encoded_jwt, "token_type": "bearer", "user": {"id": db_user.id, "email": db_user.email, "name": db_user.name}}
 
 @app.get("/")
 def health_check():

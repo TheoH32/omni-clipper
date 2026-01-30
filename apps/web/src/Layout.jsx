@@ -12,9 +12,12 @@ import {
   Avatar,
   MenuDivider,
 } from '@chakra-ui/react';
+import { useAuth } from './AuthContext';
 import { HamburgerIcon } from '@chakra-ui/icons';
 
 export default function Layout({ children }) {
+  const { isAuthenticated, user } = useAuth();
+
   return (
     <Box>
       <Flex
@@ -32,28 +35,30 @@ export default function Layout({ children }) {
           </Heading>
         </Flex>
 
-        <Menu>
-          <MenuButton
-            as={Avatar}
-            size="sm"
-            cursor="pointer"
-            name="John Doe" // Placeholder name for avatar fallback
-            src="https://bit.ly/dan-abramov" // Placeholder image
-          />
-          <MenuList color="black">
-            <Box p="2">
-              <Text fontWeight="bold">John Doe</Text>
-              <Text fontSize="sm">john.doe@example.com</Text>
-            </Box>
-            <MenuDivider />
-            <MenuItem>
-              Settings
-            </MenuItem>
-            <MenuItem>
-              User Profile
-            </MenuItem>
-          </MenuList>
-        </Menu>
+        {isAuthenticated && (
+          <Menu>
+            <MenuButton
+              as={Avatar}
+              size="sm"
+              cursor="pointer"
+              name={user?.name}
+              src="https://bit.ly/dan-abramov" // Placeholder image
+            />
+            <MenuList color="black">
+              <Box p="2">
+                <Text fontWeight="bold">{user?.name}</Text>
+                <Text fontSize="sm">{user?.email}</Text>
+              </Box>
+              <MenuDivider />
+              <MenuItem>
+                Settings
+              </MenuItem>
+              <MenuItem>
+                User Profile
+              </MenuItem>
+            </MenuList>
+          </Menu>
+        )}
       </Flex>
       <Box as="main" p={8}>
         {children}

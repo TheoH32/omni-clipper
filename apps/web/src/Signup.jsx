@@ -18,6 +18,7 @@ import { ViewIcon, ViewOffIcon } from '@chakra-ui/icons';
 import Layout from './Layout';
 
 export default function Signup() {
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [accessCode, setAccessCode] = useState('');
@@ -31,6 +32,7 @@ export default function Signup() {
     setLoading(true);
     try {
       await axios.post(`${import.meta.env.VITE_API_URL}/signup`, {
+        name,
         email,
         password,
         access_code: accessCode,
@@ -63,6 +65,14 @@ export default function Signup() {
         </Heading>
         <form onSubmit={handleSubmit}>
           <VStack spacing={4}>
+            <FormControl isRequired>
+              <FormLabel>Name</FormLabel>
+              <Input
+                type="text"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+              />
+            </FormControl>
             <FormControl isRequired>
               <FormLabel>Email</FormLabel>
               <Input
@@ -109,3 +119,4 @@ export default function Signup() {
     </Layout>
   );
 }
+
